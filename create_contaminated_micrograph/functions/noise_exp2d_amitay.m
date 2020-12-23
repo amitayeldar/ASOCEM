@@ -1,4 +1,4 @@
-function [noise,P,S,T1]=noise_exp2d_amitay(N,K,T1,refpsd)
+function [noise,P,S,T1]=noise_exp2d_amitay(N,K,T1,T2,refpsd)
 % NOISE_EXP2D   Generate colored noise with exponentially decaying auto
 %               correlation.
 % 
@@ -52,7 +52,7 @@ nf=ifftshift(sqrt(H.*c2));
 W=iwindow(M,'hann');
 P=zeros(M,M,K);
 for k=1:K % Apply filter
-     gn=randn(M);              % Generate noise
+     gn=T2*randn(M);              % Generate noise
      cn=ifft2(fft2(gn).*nf);   % Apply filter
      noise(:,:,k)=cn(1:N,1:N); % Take N samples
      P(:,:,k)=cfft2(cn.*W);

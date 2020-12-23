@@ -1,4 +1,4 @@
-function [phi] = ASOCEM(I0,area_mat_sz,smoothing_term,maxIter)
+function [phi,mu0_est,cov0_est,mu1_est,cov1_est] = ASOCEM(I0,downscale_size,area_mat_sz,smoothing_term,maxIter)
 % This function segment contamination in cryo_EM micrographs
 
 % INPUT
@@ -16,13 +16,13 @@ function [phi] = ASOCEM(I0,area_mat_sz,smoothing_term,maxIter)
 % R1_est       area one radial covarience estimation
 
 %% intialize segmentation parameters
-dt = 0.1; % time step
-mu = 1; %curve length regularization
-nu = 1; %curve area regularization
+dt = 10^(0); % time step
+mu = 10^(-2); %curve length regularization
+nu = 0; %curve area regularization
 eta = 10^(-8); %prevent zero curvature (division by 0)
 Eps = 1; %epsilon (for delta function)
 tol = 10^(-3);
-maxImgSz = 200; % downsampling parameter
+% maxImgSz = 200; % downsampling parameter
 if mod(area_mat_sz,2)==0 %% cov_mat_sz have to be odd so cov matrix size will be odd
     area_mat_sz = area_mat_sz-1;
 end
@@ -30,7 +30,7 @@ cov_mat_sz = area_mat_sz^2;
 
 %% preprocess image
 % size rescale
-szScaling = maxImgSz/max(size(I0));
+szScaling = downscale_size/max(size(I0));
 I = cryo_downsample(I0,floor(szScaling*size(I0)));
 % image size should be odd
 if mod(size(I,1),2)==0
@@ -55,25 +55,24 @@ end
 
 %% intialize phi as liphsiczh circ
 [X,Y] = meshgrid(-floor(size(I,2)/2):1:floor(size(I,2)/2),-floor(size(I,1)/2):1:floor(size(I,1)/2));
+% phi_0 = sin((pi/30)*X).*sin((pi/30)*Y);
 phi_0 = min(size(I)/3)^2 - (X.^2 + Y.^2);
 phi_0 = phi_0./max(abs(phi_0(:)));
 
-%% chan vese time process
-[phi,mu0_est,R0_est,mu1_est,R1_est] = chan_vese_process(I,phi_0,cov_mat_sz,dt,mu,nu,eta,Eps,maxIter,tol);
 
+%% chan vese time process
+[phi,mu0_est,cov0_est,mu1_est,cov1_est] = chan_vese_process(I,phi_0,cov_mat_sz,dt,mu,nu,eta,Eps,maxIter,tol);
+if phi == ones(size(phi)) % we dont want to use this micrograph
+    return
+end
 
 % the smaller area will considered to be the contamination
-t = ceil(area_mat_sz/2+1);
-size_0 = sum(phi(1+t:end-t,1+t:end-t)>0,'all');
-size_1 = sum(phi(1+t:end-t,1+t:end-t)<=0,'all');
+
+size_0 = sum(phi>0,'all');
+size_1 = sum(phi<0,'all');
 if size_0 >= size_1 % changing areas 
     phi = -1*phi;
 end
   
-% we do not know about the boundary of the image hence it is not contamination
-phi(1:t,:) = -1;
-phi(end-t:end,:) = -1;
-phi(:,1:t) = -1;
-phi(:,end-t:end) = -1;
 end
 
