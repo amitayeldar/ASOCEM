@@ -1,4 +1,4 @@
-function [phi,mu0_est,cov0_est,mu1_est,cov1_est] = ASOCEM(I0,downscale_size,area_mat_sz,smoothing_term,contamination_criterion,maxIter)
+function [phi,mu0_est,cov0_est,mu1_est,cov1_est] = ASOCEM(I0,downscale_size,area_mat_sz,smoothing_term,maxIter)
 % This function segment contamination in cryo_EM micrographs
 
 % INPUT
@@ -66,25 +66,23 @@ if phi == ones(size(phi)) % we dont want to use this micrograph
     return
 end
 
-
-if contamination_criterion == 0 % the smaller area will considered to be the contamination
-    size_0 = sum(phi>0,'all');
-    size_1 = sum(phi<0,'all');
-    if size_0 >= size_1 % changing areas 
-        phi = -1*phi;
-    end
-else % the lower mean will be considerd as contamination
-    tmp_0 = I(phi>0);
-    m_0 = mean(tmp_0(:));
-    tmp_1 = I(phi>0);
-    m_1 = mean(tmp_1(:));
-    if m_0 >= m_1 % changing areas 
-        phi = -1*phi;
-    end  
+% the smaller area will considered to be the contamination
+contamination_criterion
+size_0 = sum(phi>0,'all');
+size_1 = sum(phi<0,'all');
+if size_0 >= size_1 % changing areas 
+    phi = -1*phi;
 end
 
+% the lower mean will be considerd as contamination
 
-
+tmp_0 = I(phi>0);
+m_0 = mean(tmp_0(:));
+tmp_1 = I(phi>0);
+m_1 = mean(tmp_1(:));
+if m_0 >= m_1 % changing areas 
+    phi = -1*phi;
+end
 
 
 

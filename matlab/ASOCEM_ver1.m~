@@ -1,5 +1,5 @@
 
-function ASOCEM_ver1(micrograph_addr,output_dir,particle_size,downscale_size,area_size,smoothing_term,contamination_criterion)
+function ASOCEM_ver1(micrograph_addr,output_dir,particle_size,downscale_size,area_size,smoothing_term)
 % parameters
 files = dir([micrograph_addr,'/','*.mrc']);
 numOfMicro = size(files,1);
@@ -12,7 +12,7 @@ parfor expNum = 1:numOfMicro
     mgBig = rot90(mgBig);
     I0 = mgBig;
     % run ASOCEM
-    [phi] = ASOCEM(I0,downscale_size,area_size,smoothing_term,contamination_criterion,maxIterAsocem);
+    [phi] = ASOCEM(I0,downscale_size,area_size,smoothing_term,maxIterAsocem);
     if phi==ones(size(phi)) % all is contamination dont pick
         continue
     end
@@ -42,6 +42,6 @@ parfor expNum = 1:numOfMicro
     subplot(1,2,1); imshow(cryo_downsample(I0,200),[]);
     subplot(1,2,2); imshow(imresize(phi_seg,[200,200]),[]);
     saveas(f,[output_dir,microName,'_imageSz_',num2str(downscale_size),'area_',num2str(area_size),'.jpg'])
-%     save([output_dir,microName,'_binary_seg.mat'],'phi_seg');
+    save([output_dir,microName,'_binary_seg.mat'],'phi_seg');
 end
 end

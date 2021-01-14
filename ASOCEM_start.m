@@ -87,6 +87,16 @@ while isempty(smoothing_term)
     end
 end
 
+contamination_criterion='';
+while isempty(contamination_criterion)
+    contamination_criterion_str =fmtinput('Enter the contamination_criterion, 0 for lower size, 1 to lower mean: ','','%s');
+    contamination_criterion = str2double(contamination_criterion_str);
+    if and(contamination_criterion~=0,contamination_criterion~=1)
+        fprintf('contamination_criterion should be  0 or 1.\n');
+        contamination_criterion='';
+    end
+end
+
 % message='Do you want to use the GPU?';
 % do_create=multichoice_question(message,{'Y','N'},[ 1, 0],'Y');
 % if do_create==1
@@ -96,5 +106,5 @@ end
 % end
 
 
-ASOCEM_ver1(micrograph_addr,output_dir,particle_size,downscale_size,area_size,smoothing_term)
+ASOCEM_ver1(micrograph_addr,output_dir,particle_size,downscale_size,area_size,smoothing_term,contamination_criterion)
 
