@@ -61,7 +61,7 @@ for iter = 1:maxIter
     end
     [row,col] = find(and(phi<band_width,phi>-band_width)); 
     for i=1:size(row,1)
-        if and(and(2<=row(i),row(i)<=size(phi,1)-2 - ceil(area/2)),and(2<=col(i),col(i)<=size(phi,2)-2 - ceil(area/2)))==1
+        if and(and(2<=row(i),row(i)<=size(phi,1)-rem(size(phi,1),area)-1),and(2<=col(i),col(i)<=size(phi,1)-rem(size(phi,2),area)-1))==1
                 patch_r = ceil(row(i)/area);
                 patch_c = ceil(col(i)/area);
                 f = reshape(I((patch_r-1)*area+1:patch_r*area,(patch_c-1)*area+1:patch_c*area),[],1);      
