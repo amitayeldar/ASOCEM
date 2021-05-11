@@ -10,10 +10,7 @@ function [phi,mu0_est,cov0_est,mu1_est,cov1_est] = ASOCEM(I0,downscale_size,area
 
 % OUTPUT
 % phi          chan vese level set function. phi>0 is area zero and phi<=0 is area 1
-% mu0_est      area zero mean estimation
-% R0_est       area zero radial covarience estimation
-% mu1_est      area one mean estimation
-% R1_est       area one radial covarience estimation
+
 
 %% intialize segmentation parameters
 dt = 10^(0); % time step
@@ -55,7 +52,6 @@ end
 
 %% intialize phi as liphsiczh circ
 [X,Y] = meshgrid(-floor(size(I,2)/2):1:floor(size(I,2)/2),-floor(size(I,1)/2):1:floor(size(I,1)/2));
-% phi_0 = sin((pi/30)*X).*sin((pi/30)*Y);
 phi_0 = min(size(I)/3)^2 - (X.^2 + Y.^2);
 phi_0 = phi_0./max(abs(phi_0(:)));
 
@@ -65,7 +61,6 @@ phi_0 = phi_0./max(abs(phi_0(:)));
 if phi == ones(size(phi)) % we dont want to use this micrograph
     return
 end
-
 
 if contamination_criterion == 0 % the smaller area will considered to be the contamination
     size_0 = sum(phi>0,'all');
@@ -82,11 +77,5 @@ else % the lower mean will be considerd as contamination
         phi = -1*phi;
     end  
 end
-
-
-
-
-
-
 end
 

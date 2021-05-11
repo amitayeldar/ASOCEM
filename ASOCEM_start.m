@@ -2,7 +2,6 @@ function ASOCEM_start
 
 % ASOCEM_start
 % Gather all information required to start the contamination removal out of the micrographs.
-% This is the first command to be called in any processing workflw.
 % 
 % Amitay Eldar, December 2020.
 
@@ -96,15 +95,6 @@ while isempty(contamination_criterion)
         contamination_criterion='';
     end
 end
-
-% message='Do you want to use the GPU?';
-% do_create=multichoice_question(message,{'Y','N'},[ 1, 0],'Y');
-% if do_create==1
-%     gpu_use = 1;
-% else
-%     gpu_use = 0;
-% end
-
 
 ASOCEM_ver1(micrograph_addr,output_dir,particle_size,downscale_size,area_size,smoothing_term,contamination_criterion)
 
