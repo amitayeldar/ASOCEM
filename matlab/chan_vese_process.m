@@ -86,7 +86,7 @@ for iter = 1:maxIter
     
     if fast_flag==2
         for i = 1:area:size(phi,1)-rem(size(phi,1),area)-1
-            for j  = 1:area:size(phi,1)-rem(size(phi,1),area)-1
+            for j  = 1:area:size(phi,2)-rem(size(phi,2),area)-1
                     f = reshape(I(i:area+i-1,j:area+j-1),[],1); 
                     delta_ij = deltaEps(phi(i,j),Eps);
                     RT = - nu +(1/size(f,1))*0.5*((logdet1-logdet0)+(f-mu1_est)'*cov1_inv*(f-mu1_est)-(f-mu0_est)'*cov0_inv*(f-mu0_est));
